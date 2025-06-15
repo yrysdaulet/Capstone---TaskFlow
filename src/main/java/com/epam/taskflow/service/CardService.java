@@ -36,8 +36,7 @@ public class CardService {
             throw new UnauthorizedAccessException("User not authorized to add cards to this list");
         }
         Board board = list.getBoard();
-        User currentUser = new User();
-        permissionService.validateEditorAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
 
         Card card = modelMapper.map(cardDTO, Card.class);
         card.setList(list);
@@ -60,10 +59,7 @@ public class CardService {
             throw new UnauthorizedAccessException("User not authorized to view cards in this list");
         }
         Board board = list.getBoard();
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateViewerAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
 
         return cardRepository.findByListOrderByPositionAsc(list).stream()
                 .map(card -> modelMapper.map(card, CardDTO.class))
@@ -79,10 +75,7 @@ public class CardService {
             throw new UnauthorizedAccessException("User not authorized to update this card");
         }
         Board board = card.getList().getBoard();
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateEditorAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
         card.setTitle(cardDTO.getTitle());
         card.setDescription(cardDTO.getDescription());
         card.setDueDate(cardDTO.getDueDate());
@@ -101,10 +94,7 @@ public class CardService {
         }
         Board board = card.getList().getBoard();
 
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateEditorAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
 
         cardRepository.delete(card);
     }
@@ -117,10 +107,7 @@ public class CardService {
 
         ListEntity currentList = card.getList();
         Board currentBoard = currentList.getBoard();
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateEditorAccess(currentBoard, currentUser);
+        permissionService.validateEditorAccess(currentBoard, userId);
 
 
         if (!boardService.isUserAuthorized(currentBoard, userId)) {

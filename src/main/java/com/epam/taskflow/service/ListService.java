@@ -34,10 +34,7 @@ public class ListService {
         if (!boardService.isUserAuthorized(board, userId)) {
             throw new UnauthorizedAccessException("User not authorized to add lists to this board");
         }
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateEditorAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
         ListEntity list = modelMapper.map(listDTO, ListEntity.class);
         list.setBoard(board);
 
@@ -57,10 +54,7 @@ public class ListService {
         if (!boardService.isUserAuthorized(board, userId)) {
             throw new UnauthorizedAccessException("User not authorized to view lists of this board");
         }
-        User currentUser = new User();
-        currentUser.setId(userId);
-
-        permissionService.validateEditorAccess(board, currentUser);
+        permissionService.validateEditorAccess(board, userId);
         return listRepository.findByBoardOrderByPositionAsc(board).stream()
                 .map(list -> modelMapper.map(list, ListDTO.class))
                 .collect(Collectors.toList());
@@ -76,10 +70,8 @@ public class ListService {
             throw new UnauthorizedAccessException("User not authorized to update this list");
         }
 
-        User currentUser = new User();
-        currentUser.setId(userId);
+        permissionService.validateEditorAccess(board, userId);
 
-        permissionService.validateEditorAccess(board, currentUser);
         list.setTitle(listDTO.getTitle());
         if (listDTO.getPosition() != null) {
             list.setPosition(listDTO.getPosition());
@@ -98,10 +90,8 @@ public class ListService {
         if (!boardService.isUserAuthorized(board, userId)) {
             throw new UnauthorizedAccessException("User not authorized to delete this list");
         }
-        User currentUser = new User();
-        currentUser.setId(userId);
+        permissionService.validateEditorAccess(board, userId);
 
-        permissionService.validateEditorAccess(board, currentUser);
         listRepository.delete(list);
     }
 
@@ -114,10 +104,8 @@ public class ListService {
         if (!boardService.isUserAuthorized(board, userId)) {
             throw new UnauthorizedAccessException("User not authorized to move this list");
         }
-        User currentUser = new User();
-        currentUser.setId(userId);
+        permissionService.validateEditorAccess(board, userId);
 
-        permissionService.validateEditorAccess(board, currentUser);
 
         List<ListEntity> lists = listRepository.findByBoardOrderByPositionAsc(board);
 

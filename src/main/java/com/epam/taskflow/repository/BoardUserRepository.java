@@ -15,4 +15,6 @@ public interface BoardUserRepository extends JpaRepository<BoardUser, Long> {
     List<BoardUser> findByUser(User user);
     List<BoardUser> findByBoard(Board board);
     boolean existsByUserAndBoard(User user, Board board);
+
+    Optional<BoardUser> findByUserIdAndBoard(Long userId, Board board);
 }
