@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Kanban Board</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Loading TaskFlow...</p>
+    </div>
+
+    <!-- Authentication Section -->
+    <div id="auth-section" class="auth-section hidden">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1><i class="fas fa-tasks"></i> TaskFlow</h1>
+                <p>Organize your tasks with ease</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form">
+                <h2>Sign In</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loading hidden">Signing in...</span>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="#" id="show-register">Sign up</a>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="auth-form hidden">
+                <h2>Create Account</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Create Account</span>
+                        <span class="btn-loading hidden">Creating...</span>
+                    </button>
+                </form>
+                <p class="auth-switch">
+                    Already have an account?
+                    <a href="#" id="show-login">Sign in</a>
+                </p>
+            </div>
+
+            <div id="auth-error" class="error-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="main-app hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-tasks"></i> TaskFlow</h1>
+                    <span id="user-welcome" class="user-welcome"></span>
+                </div>
+                <div class="header-right">
+                    <button id="logout-btn" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Boards View -->
+        <div id="boards-view" class="boards-view">
+            <div class="boards-container">
+                <div class="boards-header">
+                    <h2>Your Boards</h2>
+                    <button id="create-board-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Board
+                    </button>
+                </div>
+                <div id="boards-grid" class="boards-grid">
+                    <!-- Boards will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Board Detail View -->
+        <div id="board-view" class="board-view hidden">
+            <div class="board-header">
+                <div class="board-header-left">
+                    <button id="back-to-boards" class="btn btn-ghost">
+                        <i class="fas fa-arrow-left"></i> Back to Boards
+                    </button>
+                    <h2 id="board-title"></h2>
+                    <!-- Rename Board Button -->
+                    <button id="rename-board-btn" class="btn btn-ghost" title="Rename Board">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+                <div class="board-header-right">
+                    <button id="share-board-btn" class="btn btn-secondary">
+                        <i class="fas fa-share-alt"></i> Share Board
+                    </button>
+                    <button id="create-list-btn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add List
+                    </button>
+                </div>
+            </div>
+            <div id="lists-container" class="lists-container">
+                <!-- Lists will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Board Modal -->
+    <div id="create-board-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Board</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="create-board-form">
+                <div class="form-group">
+                    <label for="board-title-input">Board Title</label>
+                    <input type="text" id="board-title-input" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Board</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create List Modal -->
+    <div id="create-list-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New List</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="create-list-form">
+                <div class="form-group">
+                    <label for="list-title-input">List Title</label>
+                    <input type="text" id="list-title-input" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create List</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Card Modal -->
+    <div id="create-card-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Card</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="create-card-form">
+                <div class="form-group">
+                    <label for="card-title-input">Card Title</label>
+                    <input type="text" id="card-title-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-description-input">Description (optional)</label>
+                    <textarea id="card-description-input" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Card</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Card Modal -->
+    <div id="edit-card-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Card</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="edit-card-form">
+                <div class="form-group">
+                    <label for="edit-card-title-input">Card Title</label>
+                    <input type="text" id="edit-card-title-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-card-description-input">Description (optional)</label>
+                    <textarea id="edit-card-description-input" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Card</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Share Board Modal -->
+    <div id="share-board-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Board</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="share-board-form">
+                    <div class="form-group">
+                        <label for="collaborator-user-id">User ID</label>
+                        <input type="number" id="collaborator-user-id" placeholder="Enter user ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="collaborator-role">Role</label>
+                        <select id="collaborator-role" required>
+                            <option value="VIEWER">Viewer (Read Only)</option>
+                            <option value="EDITOR">Editor (Can Edit)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add Collaborator
+                    </button>
+                </form>
+                <hr class="modal-divider">
+                <div class="collaborators-section">
+                    <h4>Current Collaborators</h4>
+                    <div id="current-collaborators" class="collaborators-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename List Modal -->
+    <div id="rename-list-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Rename List</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="rename-list-form">
+                <div class="form-group">
+                    <label for="rename-list-input">List Title</label>
+                    <input type="text" id="rename-list-input" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename List</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rename Board Modal -->
+    <div id="rename-board-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Rename Board</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="rename-board-form">
+                <div class="form-group">
+                    <label for="rename-board-input">Board Title</label>
+                    <input type="text" id="rename-board-input" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Rename Board</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="error-toast" class="toast error-toast hidden">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="error-message"></span>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="success-toast" class="toast success-toast hidden">
+        <i class="fas fa-check-circle"></i>
+        <span id="success-message"></span>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
