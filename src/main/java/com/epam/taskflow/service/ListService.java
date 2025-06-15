@@ -54,7 +54,6 @@ public class ListService {
         if (!boardService.isUserAuthorized(board, userId)) {
             throw new UnauthorizedAccessException("User not authorized to view lists of this board");
         }
-        permissionService.validateEditorAccess(board, userId);
         return listRepository.findByBoardOrderByPositionAsc(board).stream()
                 .map(list -> modelMapper.map(list, ListDTO.class))
                 .collect(Collectors.toList());

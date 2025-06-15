@@ -58,8 +58,7 @@ public class CardService {
         if (!boardService.isUserAuthorized(((ListEntity) list).getBoard(), userId)) {
             throw new UnauthorizedAccessException("User not authorized to view cards in this list");
         }
-        Board board = list.getBoard();
-        permissionService.validateEditorAccess(board, userId);
+
 
         return cardRepository.findByListOrderByPositionAsc(list).stream()
                 .map(card -> modelMapper.map(card, CardDTO.class))
