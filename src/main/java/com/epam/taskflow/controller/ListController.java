@@ -3,6 +3,7 @@ package com.epam.taskflow.controller;
 import com.epam.taskflow.dto.ListDTO;
 import com.epam.taskflow.model.User;
 import com.epam.taskflow.service.ListService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,11 +21,11 @@ public class ListController {
     private final ListService listService;
 
     @PostMapping
-    public ResponseEntity<ListDTO> createList(@RequestBody ListDTO listDTO,
+    public ResponseEntity<ListDTO> createList(@Valid @RequestBody ListDTO listDTO,
                                               @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         ListDTO createdList = listService.createList(listDTO, userId);
-        return ResponseEntity.ok(createdList);
+        return ResponseEntity.status(201).body(createdList);
     }
 
     @GetMapping("/board/{boardId}")
@@ -37,7 +38,7 @@ public class ListController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ListDTO> updateList(@PathVariable Long id,
-                                              @RequestBody ListDTO listDTO,
+                                              @Valid @RequestBody ListDTO listDTO,
                                               @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         ListDTO updatedList = listService.updateList(id, listDTO, userId);

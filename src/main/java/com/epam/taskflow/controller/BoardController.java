@@ -3,6 +3,7 @@ package com.epam.taskflow.controller;
 import com.epam.taskflow.dto.BoardDTO;
 import com.epam.taskflow.model.User;
 import com.epam.taskflow.service.BoardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,12 +21,12 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<BoardDTO> createBoard(@RequestBody BoardDTO boardDTO,
+    public ResponseEntity<BoardDTO> createBoard(@Valid @RequestBody BoardDTO boardDTO,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         
         BoardDTO createdBoard = boardService.createBoard(boardDTO, userId);
-        return ResponseEntity.ok(createdBoard);
+        return ResponseEntity.status(201).body(createdBoard);
     }
 
     @GetMapping
@@ -45,8 +46,8 @@ public class BoardController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BoardDTO> updateBoard(@PathVariable Long id,
-                                                @RequestBody BoardDTO boardDTO,
-                                                @AuthenticationPrincipal UserDetails userDetails) {
+                                               @jakarta.validation.Valid @RequestBody BoardDTO boardDTO,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         BoardDTO updatedBoard = boardService.updateBoard(id, boardDTO, userId);
         return ResponseEntity.ok(updatedBoard);

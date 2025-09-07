@@ -3,6 +3,7 @@ package com.epam.taskflow.controller;
 import com.epam.taskflow.dto.CardDTO;
 import com.epam.taskflow.model.User;
 import com.epam.taskflow.service.CardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,12 +21,12 @@ public class CardController {
     private final CardService cardService;
     @PostMapping
 
-    public ResponseEntity<CardDTO> createCard(@RequestBody CardDTO cardDTO,
+    public ResponseEntity<CardDTO> createCard(@Valid @RequestBody CardDTO cardDTO,
                                               @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
 
         CardDTO createdCard = cardService.createCard(cardDTO, userId);
-        return ResponseEntity.ok(createdCard);
+        return ResponseEntity.status(201).body(createdCard);
     }
 
     @GetMapping("/list/{listId}")
@@ -38,7 +39,7 @@ public class CardController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CardDTO> updateCard(@PathVariable Long id,
-                                              @RequestBody CardDTO cardDTO,
+                                              @Valid @RequestBody CardDTO cardDTO,
                                               @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((User) userDetails).getId();
         CardDTO updatedCard = cardService.updateCard(id, cardDTO, userId);

@@ -3,8 +3,8 @@ package com.epam.taskflow.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lists")
@@ -30,5 +30,5 @@ public class ListEntity {
 
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
-    private Set<Card> cards = new HashSet<>();
+    private List<Card> cards = new ArrayList<>();
 }

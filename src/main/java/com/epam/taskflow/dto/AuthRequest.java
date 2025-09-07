@@ -1,5 +1,6 @@
 package com.epam.taskflow.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -8,6 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AuthRequest {
+    @NotBlank
     private String username;
+    @NotBlank
     private String password;
 }
